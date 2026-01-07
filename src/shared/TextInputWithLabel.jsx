@@ -1,5 +1,6 @@
 function TextInputWithLabel({ elementId, label, onChange, ref, value }) {
-  return;
+ 
+   return(
   <>
     <label htmlFor={elementId}>{label}</label>
     <input
@@ -9,7 +10,7 @@ function TextInputWithLabel({ elementId, label, onChange, ref, value }) {
       value={value}
       onChange={onChange}
     ></input>
-  </>;
+  </>);
 }
 
 export default TextInputWithLabel;
