@@ -23,7 +23,7 @@ function TodoForm({ onAddTodo }) {
         onChange={(e) => {
           setWorkingTodoTitle(e.target.value);
         }}
-      ></TextInputWithLabel>
+      />
 
       <button disabled={workingTodoTitle === ''}>Add Todo</button>
     </form>
