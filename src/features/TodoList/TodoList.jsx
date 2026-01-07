@@ -1,4 +1,4 @@
-import TodoListItem from './ToDoListItem';
+import TodoListItem from './TodoListItem';
 
 function TodoList({ todoList, onCompleteTodo }) {
   const filtredTodoList = todoList.filter((todo) => !todo.isCompleted);
