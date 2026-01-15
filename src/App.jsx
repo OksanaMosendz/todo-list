@@ -11,11 +11,53 @@ function App() {
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-  function addTodo(title) {
-    const newTodo = { title, id: Date.now(), isCompleted: false };
-    setTodoList([...todoList, newTodo]);
-  }
+  const addTodo = async (newTodo) => {
+    const payload = {
+      records: [
+        {
+          fields: {
+            title: newTodo.title,
+            isCompleted: newTodo.isCompleted,
+          },
+        },
+      ],
+    };
+
+    const options = {
+      method: 'POST',
+      headers: {
+        Authorization: token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+
+    try {
+      setIsSaving(true);
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      const records = data.records;
+      if (!response.ok) {
+        throw new Error(records.error.message);
+      } else {
+        const savedTodo = {
+          title: records[0].fields.title,
+          id: records[0].fields.id,
+          isCompleted: records[0].fields.isCompleted,
+        };
+        if (!records[0].fields.isCompleted) {
+          savedTodo.isCompleted = false;
+        }
+        setTodoList([...todoList, savedTodo]);
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+    setIsSaving(false);
+  };
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -25,6 +67,7 @@ function App() {
         method: 'GET',
         headers: {
           Authorization: token,
+          'Content-Type': 'application/json',
         },
       };
 
@@ -36,6 +79,7 @@ function App() {
           throw new Error(data.error.message);
         } else {
           const records = data.records;
+    
           const fetchedTodos = records.map((record) => {
             const todo = {
               title: record.fields.title,
@@ -60,7 +104,6 @@ function App() {
     fetchTodos();
   }, []);
 
- 
   function completeTodo(id) {
     const updatedTodo = todoList.map((todo) => {
       if (id === todo.id) {
@@ -82,7 +125,7 @@ function App() {
   return (
     <div>
       <h1>Todo List</h1>
-      <TodoForm onAddTodo={addTodo}></TodoForm>
+      <TodoForm onAddTodo={addTodo} isSaving={isSaving}></TodoForm>
 
       <TodoList
         onCompleteTodo={completeTodo}
