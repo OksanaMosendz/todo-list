@@ -51,7 +51,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
           <>
             <label htmlFor={todo.id}>
               <input
-                onChange={() => onCompleteTodo(todo.id)}
+                onChange={() => onCompleteTodo(todo)}
                 type="checkbox"
                 checked={todo.isCompleted}
                 id={todo.id}

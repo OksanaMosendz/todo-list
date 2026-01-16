@@ -106,27 +106,74 @@ function App() {
     setIsSaving(false);
   };
 
-  function completeTodo(id) {
-    const updatedTodo = todoList.map((todo) => {
-      if (id === todo.id) {
-        return { ...todo, isCompleted: true };
-      } else return todo;
-    });
-    setTodoList(updatedTodo);
-  }
+  const completeTodo = async (completedTodo) => {
+
+    const originalTodo = todoList.find((todo) => todo.id === completedTodo.id);
+  
+
+    setTodoList((prevTodoList) =>
+      prevTodoList.map((todo) =>
+        todo.id === completedTodo.id ? { ...todo, isCompleted: true } : todo
+      )
+    );
+
+    const payload = {
+      records: [
+        {
+          id: completedTodo.id,
+          fields: {
+            title: completedTodo.title,
+            isCompleted: true,
+          },
+        },
+      ],
+    };
+
+    const options = {
+      method: 'PATCH',
+      headers: {
+        Authorization: token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(`${error.message}. Reverting todo...`);
+
+      const revertedTodos = todoList.map((todo) => {
+        if (originalTodo.id === todo.id) {
+          return originalTodo;
+        } else return todo;
+      });
+      setTodoList([...revertedTodos]);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const updateTodo = async (editedTodo) => {
     const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
 
     setTodoList((prevTodoList) =>
-      prevTodoList.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo))
+      prevTodoList.map((todo) =>
+        todo.id === editedTodo.id ? editedTodo : todo
+      )
     );
 
     const payload = {
       records: [
         {
           id: editedTodo.id,
-          fiels: {
+          fields: {
             title: editedTodo.title,
             isCompleted: editedTodo.isCompleted,
           },
