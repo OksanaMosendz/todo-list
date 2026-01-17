@@ -1,17 +1,19 @@
 import './App.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+
 
 function App() {
-  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
-  const token = `Bearer ${import.meta.env.VITE_PAT}`;
-
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const API = {
+    url: `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`,
+    token: `Bearer ${import.meta.env.VITE_PAT}`,
+  };
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -20,13 +22,13 @@ function App() {
       const options = {
         method: 'GET',
         headers: {
-          Authorization: token,
+          Authorization: API.token,
           'Content-Type': 'application/json',
         },
       };
 
       try {
-        const response = await fetch(url, options);
+        const response = await fetch(API.url, options);
         const data = await response.json();
 
         if (!response.ok) {
@@ -73,7 +75,7 @@ function App() {
     const options = {
       method: 'POST',
       headers: {
-        Authorization: token,
+        Authorization: API.token,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
@@ -81,7 +83,7 @@ function App() {
 
     try {
       setIsSaving(true);
-      const response = await fetch(url, options);
+      const response = await fetch(API.url, options);
       const data = await response.json();
 
       const records = data.records;
@@ -106,62 +108,10 @@ function App() {
     setIsSaving(false);
   };
 
-  const completeTodo = async (completedTodo) => {
+  const changeTodo = async (editedTodo) => {
 
-    const originalTodo = todoList.find((todo) => todo.id === completedTodo.id);
-  
-
-    setTodoList((prevTodoList) =>
-      prevTodoList.map((todo) =>
-        todo.id === completedTodo.id ? { ...todo, isCompleted: true } : todo
-      )
-    );
-
-    const payload = {
-      records: [
-        {
-          id: completedTodo.id,
-          fields: {
-            title: completedTodo.title,
-            isCompleted: true,
-          },
-        },
-      ],
-    };
-
-    const options = {
-      method: 'PATCH',
-      headers: {
-        Authorization: token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    };
-
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error.message);
-      }
-    } catch (error) {
-      console.log(error);
-      setErrorMessage(`${error.message}. Reverting todo...`);
-
-      const revertedTodos = todoList.map((todo) => {
-        if (originalTodo.id === todo.id) {
-          return originalTodo;
-        } else return todo;
-      });
-      setTodoList([...revertedTodos]);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const updateTodo = async (editedTodo) => {
     const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
+
 
     setTodoList((prevTodoList) =>
       prevTodoList.map((todo) =>
@@ -180,18 +130,19 @@ function App() {
         },
       ],
     };
+ 
 
     const options = {
       method: 'PATCH',
       headers: {
-        Authorization: token,
+        Authorization: API.token,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
     };
 
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(API.url, options);
       const data = await response.json();
 
       if (!response.ok) {
@@ -218,8 +169,8 @@ function App() {
       <TodoForm onAddTodo={addTodo} isSaving={isSaving}></TodoForm>
 
       <TodoList
-        onCompleteTodo={completeTodo}
-        onUpdateTodo={updateTodo}
+        onCompleteTodo={changeTodo}
+        onUpdateTodo={changeTodo}
         todoList={todoList}
         isLoading={isLoading}
       ></TodoList>

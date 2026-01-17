@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import TextInputWithLabel from '../../shared/TextInputWithLabel';
-import TodoList from './TodoList';
+
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +24,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
       return;
     }
     e.preventDefault();
-    onUpdateTodo({ ...todo, title: workingTitle });
+    onUpdateTodo( {...todo, title: workingTitle});
     setIsEditing(false);
   }
 
@@ -51,7 +51,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
           <>
             <label htmlFor={todo.id}>
               <input
-                onChange={() => onCompleteTodo(todo)}
+                onChange={() => onCompleteTodo({...todo, isCompleted:true})}
                 type="checkbox"
                 checked={todo.isCompleted}
                 id={todo.id}
