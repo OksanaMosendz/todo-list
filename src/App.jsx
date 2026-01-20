@@ -2,22 +2,24 @@ import './App.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
 import { useState, useEffect } from 'react';
+import TodoViewForm from './features/TodoViewForm';
 
-function encodeUrl(sortField, sortDirection){
-let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`
-return encodeURI(`https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}`);
+function encodeUrl(sortField, sortDirection) {
+  let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+  return encodeURI(
+    `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}`
+  );
 }
 
-
 function App() {
-const [todoList, setTodoList] = useState([]);
-const [isLoading, setIsLoading] = useState(false);
-const [errorMessage, setErrorMessage] = useState('');
-const [isSaving, setIsSaving] = useState(false);
-const [sortField, setSortField]=useState("createdTime");
-const [sortDirection, setSortDirection]=useState("desc");
+  const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [sortField, setSortField] = useState('createdTime');
+  const [sortDirection, setSortDirection] = useState('desc');
 
-const API = {
+  const API = {
     url: encodeUrl(sortField, sortDirection),
     token: `Bearer ${import.meta.env.VITE_PAT}`,
   };
@@ -41,23 +43,22 @@ const API = {
 
         if (!response.ok) {
           throw new Error(data.error.message);
-        } 
-          const records = data.records;
+        }
+        const records = data.records;
 
-          const fetchedTodos = records.map((record) => {
-            const todo = {
-              title: record.fields.title,
-              id: record.id,
-              isCompleted: record.fields.isCompleted,
-            };
+        const fetchedTodos = records.map((record) => {
+          const todo = {
+            title: record.fields.title,
+            id: record.id,
+            isCompleted: record.fields.isCompleted,
+          };
 
-            if (!todo.isCompleted) {
-              todo.isCompleted = false;
-            }
-            return todo;
-          });
-          setTodoList([...fetchedTodos]);
-        
+          if (!todo.isCompleted) {
+            todo.isCompleted = false;
+          }
+          return todo;
+        });
+        setTodoList([...fetchedTodos]);
       } catch (error) {
         setErrorMessage(error.message);
       } finally {
@@ -97,19 +98,18 @@ const API = {
       const records = data.records;
       if (!response.ok) {
         throw new Error(records.error.message);
-      } 
-        const savedTodo = {
-          title: records[0].fields.title,
-          id: records[0].id,
-          isCompleted: records[0].fields.isCompleted,
-        };
+      }
+      const savedTodo = {
+        title: records[0].fields.title,
+        id: records[0].id,
+        isCompleted: records[0].fields.isCompleted,
+      };
 
-        if (!records[0].fields.isCompleted) {
-          savedTodo.isCompleted = false;
-        }
+      if (!records[0].fields.isCompleted) {
+        savedTodo.isCompleted = false;
+      }
 
-        setTodoList([...todoList, savedTodo]);
-    
+      setTodoList([...todoList, savedTodo]);
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -117,9 +117,7 @@ const API = {
   };
 
   const changeTodo = async (editedTodo) => {
-
     const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
-
 
     setTodoList((prevTodoList) =>
       prevTodoList.map((todo) =>
@@ -138,7 +136,6 @@ const API = {
         },
       ],
     };
- 
 
     const options = {
       method: 'PATCH',
@@ -182,6 +179,15 @@ const API = {
         todoList={todoList}
         isLoading={isLoading}
       ></TodoList>
+
+      <hr />
+
+      <TodoViewForm
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+        sortField={sortField}
+        setSortField={setSortField}
+      />
 
       <div>
         {errorMessage !== '' && (
