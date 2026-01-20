@@ -3,21 +3,29 @@ import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
 import { useState, useEffect } from 'react';
 
+function encodeUrl(sortField, sortDirection){
+let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`
+return encodeURI(`https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}`);
+}
+
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+const [todoList, setTodoList] = useState([]);
+const [isLoading, setIsLoading] = useState(false);
+const [errorMessage, setErrorMessage] = useState('');
+const [isSaving, setIsSaving] = useState(false);
+const [sortField, setSortField]=useState("createdTime");
+const [sortDirection, setSortDirection]=useState("desc");
 
-  const API = {
-    url: `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`,
+const API = {
+    url: encodeUrl(sortField, sortDirection),
     token: `Bearer ${import.meta.env.VITE_PAT}`,
   };
 
   useEffect(() => {
     const fetchTodos = async () => {
       setIsLoading(true);
+      setErrorMessage('');
 
       const options = {
         method: 'GET',
@@ -33,7 +41,7 @@ function App() {
 
         if (!response.ok) {
           throw new Error(data.error.message);
-        } else {
+        } 
           const records = data.records;
 
           const fetchedTodos = records.map((record) => {
@@ -49,7 +57,7 @@ function App() {
             return todo;
           });
           setTodoList([...fetchedTodos]);
-        }
+        
       } catch (error) {
         setErrorMessage(error.message);
       } finally {
@@ -58,7 +66,7 @@ function App() {
     };
 
     fetchTodos();
-  }, []);
+  }, [sortField, sortDirection]);
 
   const addTodo = async (newTodo) => {
     const payload = {
@@ -89,7 +97,7 @@ function App() {
       const records = data.records;
       if (!response.ok) {
         throw new Error(records.error.message);
-      } else {
+      } 
         const savedTodo = {
           title: records[0].fields.title,
           id: records[0].id,
@@ -101,7 +109,7 @@ function App() {
         }
 
         setTodoList([...todoList, savedTodo]);
-      }
+    
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -181,7 +189,7 @@ function App() {
             <hr />
             <p>{errorMessage}</p>{' '}
             <button type="button" onClick={() => setErrorMessage('')}>
-              Dissmiss
+              Dismiss
             </button>
           </div>
         )}
