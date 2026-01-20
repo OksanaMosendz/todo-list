@@ -59,7 +59,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
         )}{' '}
       </form>
     </li>
-  );
-}
+  )
+};
 
 export default TodoListItem;

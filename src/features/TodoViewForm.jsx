@@ -1,3 +1,5 @@
+import TextInputWithLabel from '../shared/TextInputWithLabel';
+
 function TodoViewForm({
   sortDirection,
   setSortDirection,
@@ -9,14 +11,13 @@ function TodoViewForm({
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <div>
-        <label htmlFor="search-todos">Search todos</label>
-        <input
-          type="text"
-          id="search-todos"
-          value={queryString}
+        <TextInputWithLabel
+          elementId="searchTodos"
+          label="Search todos"
           onChange={(e) => {
             setQueryString(e.target.value);
           }}
+          value={queryString}
         />
         <button type="button" onClick={() => setQueryString('')}>
           Clear
