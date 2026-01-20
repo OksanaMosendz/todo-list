@@ -1,13 +1,17 @@
 import './App.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
-import { useState, useEffect } from 'react';
 import TodoViewForm from './features/TodoViewForm';
+import { useState, useEffect } from 'react';
 
-function encodeUrl(sortField, sortDirection) {
+function encodeUrl(sortField, sortDirection, queryString) {
+  let searchQuery = '';
   let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+  if (queryString) {
+    searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+  }
   return encodeURI(
-    `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}`
+    `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}${searchQuery}`
   );
 }
 
@@ -18,9 +22,10 @@ function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [sortField, setSortField] = useState('createdTime');
   const [sortDirection, setSortDirection] = useState('desc');
+  const [queryString, setQueryString] = useState('');
 
   const API = {
-    url: encodeUrl(sortField, sortDirection),
+    url: encodeUrl(sortField, sortDirection, queryString),
     token: `Bearer ${import.meta.env.VITE_PAT}`,
   };
 
@@ -67,7 +72,7 @@ function App() {
     };
 
     fetchTodos();
-  }, [sortField, sortDirection]);
+  }, [sortField, sortDirection, queryString]);
 
   const addTodo = async (newTodo) => {
     const payload = {
@@ -187,6 +192,8 @@ function App() {
         setSortDirection={setSortDirection}
         sortField={sortField}
         setSortField={setSortField}
+        queryString={queryString}
+        setQueryString={setQueryString}
       />
 
       <div>
