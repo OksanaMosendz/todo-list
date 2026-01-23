@@ -18,6 +18,7 @@ function TodoViewForm({
             setQueryString(e.target.value);
           }}
           value={queryString}
+          type="search"
         />
         <button type="button" onClick={() => setQueryString('')}>
           Clear

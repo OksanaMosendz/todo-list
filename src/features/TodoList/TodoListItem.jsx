@@ -36,6 +36,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
               value={workingTitle}
               onChange={handleEdit}
               elementId={todo.id}
+              type="text"
             />
             <button type="button" onClick={handleCancel}>
               Cancel
