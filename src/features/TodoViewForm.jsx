@@ -1,4 +1,5 @@
 import TextInputWithLabel from '../shared/TextInputWithLabel';
+import { useState, useEffect } from 'react';
 
 function TodoViewForm({
   sortDirection,
@@ -8,6 +9,17 @@ function TodoViewForm({
   queryString,
   setQueryString,
 }) {
+
+  const [localQueryString, setLocalQueryString] = useState(queryString);
+ 
+useEffect(()=>{
+  const debounce=setTimeout(()=>{
+  setQueryString(localQueryString);
+}, 500)
+
+return ()=>clearTimeout(debounce);
+}, [localQueryString, setQueryString])
+
   return (
     <form onSubmit={(e) => e.preventDefault()}>
       <div>
@@ -15,11 +27,12 @@ function TodoViewForm({
           elementId="searchTodos"
           label="Search todos"
           onChange={(e) => {
-            setQueryString(e.target.value);
+            setLocalQueryString(e.target.value);
           }}
-          value={queryString}
+          value={localQueryString}
+          type="search"
         />
-        <button type="button" onClick={() => setQueryString('')}>
+        <button type="button" onClick={() => setLocalQueryString('')}>
           Clear
         </button>
       </div>
