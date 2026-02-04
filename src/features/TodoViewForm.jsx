@@ -1,5 +1,19 @@
+import styled from 'styled-components';
 import TextInputWithLabel from '../shared/TextInputWithLabel';
 import { useState, useEffect } from 'react';
+
+const StyledViewForm = styled.form`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const StyledSortingOptions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
 
 function TodoViewForm({
   sortDirection,
@@ -9,19 +23,18 @@ function TodoViewForm({
   queryString,
   setQueryString,
 }) {
-
   const [localQueryString, setLocalQueryString] = useState(queryString);
- 
-useEffect(()=>{
-  const debounce=setTimeout(()=>{
-  setQueryString(localQueryString);
-}, 500)
 
-return ()=>clearTimeout(debounce);
-}, [localQueryString, setQueryString])
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      setQueryString(localQueryString);
+    }, 500);
+
+    return () => clearTimeout(debounce);
+  }, [localQueryString, setQueryString]);
 
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <StyledViewForm onSubmit={(e) => e.preventDefault()}>
       <div>
         <TextInputWithLabel
           elementId="searchTodos"
@@ -37,7 +50,7 @@ return ()=>clearTimeout(debounce);
         </button>
       </div>
 
-      <div>
+      <StyledSortingOptions>
         <label htmlFor="sort-by">Sort by</label>
         <select
           id="sort-by"
@@ -57,8 +70,8 @@ return ()=>clearTimeout(debounce);
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
         </select>
-      </div>
-    </form>
+      </StyledSortingOptions>
+    </StyledViewForm>
   );
 }
 export default TodoViewForm;

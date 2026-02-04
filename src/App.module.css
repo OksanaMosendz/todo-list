@@ -1,9 +1,11 @@
 .app {
+  width:100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-self: center;
 }
 
 
@@ -11,4 +13,6 @@
   border: 1px solid red;
   padding: 0.5rem;
   margin-top: 0.7rem;
+  text-align: center;
+  min-width: 50%;
 }
