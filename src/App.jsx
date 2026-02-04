@@ -1,4 +1,5 @@
 import './App.css';
+import styles from './App.module.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
 import TodoViewForm from './features/TodoViewForm';
@@ -174,7 +175,7 @@ const API = {
   };
 
   return (
-    <div>
+    <div className={styles.app}>
       <h1>Todo List</h1>
       <TodoForm onAddTodo={addTodo} isSaving={isSaving}></TodoForm>
 
@@ -196,9 +197,9 @@ const API = {
         setQueryString={setQueryString}
       />
 
-      <div>
+      <div >
         {errorMessage !== '' && (
-          <div>
+          <div className={styles.error}>
             <hr />
             <p>{errorMessage}</p>{' '}
             <button type="button" onClick={() => setErrorMessage('')}>

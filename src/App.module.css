@@ -1,0 +1,14 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.error {
+  border: 1px solid red;
+  padding: 0.5rem;
+  margin-top: 0.7rem;
+}
