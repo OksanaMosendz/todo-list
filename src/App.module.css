@@ -14,9 +14,25 @@
 
 
 .error {
-  border: 1px solid red;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid #c5111a;
   padding: 0.5rem;
   margin-top: 0.7rem;
   text-align: center;
   min-width: 50%;
+
+  svg {
+    width: 3rem;
+  }
+
+}
+
+.title{
+  display: flex;
+  align-items: center;
+  svg{
+    width:2.5rem;
+  }
 }
