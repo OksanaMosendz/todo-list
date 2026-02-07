@@ -4,16 +4,23 @@ import { useState, useEffect } from 'react';
 
 const StyledViewForm = styled.form`
   display: flex;
+  width:100%;
   align-items: center;
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+div{ display:flex;
+flex:1;}
 `;
+
+
 
 const StyledSortingOptions = styled.div`
   display: flex;
-  gap: 0.5rem;
+  width:100%;
+  justify-content:space-evenly;
 `;
+
 
 function TodoViewForm({
   sortDirection,
