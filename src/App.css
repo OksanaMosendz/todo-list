@@ -4,11 +4,24 @@
   box-sizing: border-box;
 }
 
+#root{
+   height:100vh;
+}
+
 body{
+   min-height: 100vh;
+  
    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
    font-size: 1rem;
    color: rgb(41, 36, 36);
-   background-color: rgba(27, 23, 19, 0.274);
+   background: linear-gradient(rgba(255,255,255, 0), rgba(255,255,255, 0)),
+   url("./img/background.jpg") no-repeat center/cover;
+}
+
+#root{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 button{
