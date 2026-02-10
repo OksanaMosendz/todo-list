@@ -1,0 +1,47 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+#root{
+   height:100vh;
+}
+
+body{
+   min-height: 100vh;
+  
+   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+   font-size: 1rem;
+   color: rgb(41, 36, 36);
+   background: linear-gradient(rgba(255,255,255, 0), rgba(255,255,255, 0)),
+   url("./img/background.jpg") no-repeat center/cover;
+}
+
+#root{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button{
+   padding: 0.5rem;
+   border-radius: 0.4rem;
+   text-decoration: none;
+   color: black;
+}
+
+input{
+   padding: 0.5rem;
+   border-radius: 0.4rem;
+   outline: none;
+   margin:0;
+}
+
+h1, h2, h3{
+   margin: 0;
+}
+
+p{
+   margin:0;
+}

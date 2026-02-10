@@ -1,3 +1,4 @@
+import styles from './TodoListItem.module.css';
 import { useEffect, useState } from 'react';
 import TextInputWithLabel from '../../shared/TextInputWithLabel';
 
@@ -28,7 +29,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   }
 
   return (
-    <li key={todo.id}>
+    <li className={styles.item} key={todo.id}>
       <form onSubmit={handleUpdate}>
         {isEditing ? (
           <>
