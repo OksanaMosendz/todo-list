@@ -3,6 +3,9 @@ const initialState = {
   isLoading: false,
   errorMessage: '',
   isSaving: false,
+  queryString: '',
+  sortField: 'createdTime',
+  sortDirection: 'desc',
 };
 
 const actions = {
@@ -18,9 +21,14 @@ const actions = {
 
   startRequest: 'startRequest',
   endRequest: 'endRequest',
+
+  setQueryString: 'setQueryString',
+  setSortField: 'setSortField',
+  setSortDirection: 'setSortDirection',
 };
 
 function reducer(state = initialState, action) {
+  // todos
   switch (action.type) {
     case actions.fetchTodos:
       return {
@@ -91,6 +99,7 @@ function reducer(state = initialState, action) {
         ...updatedState,
       };
 
+    // error
     case actions.setError:
       return {
         ...state,
@@ -104,6 +113,7 @@ function reducer(state = initialState, action) {
         errorMessage: '',
       };
 
+    // request
     case actions.startRequest:
       return {
         ...state,
@@ -115,6 +125,25 @@ function reducer(state = initialState, action) {
         ...state,
         isLoading: false,
         isSaving: false,
+      };
+
+    // sorting
+    case actions.setQueryString:
+      return {
+        ...state,
+        queryString: action.string,
+      };
+
+    case actions.setSortDirection:
+      return {
+        ...state,
+        sortDirection: action.e.target.value,
+      };
+
+    case actions.setSortField:
+      return {
+        ...state,
+        sortField: action.e.target.value,
       };
 
     default:

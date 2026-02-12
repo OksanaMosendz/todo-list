@@ -3,31 +3,24 @@ import styles from './App.module.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
 import TodoViewForm from './features/TodoViewForm';
-import {
-  reducer as todosReducer,
-  actions as todoActions,
-  initialState as initialTodosState,
-} from './reducers/todos.reducer';
+import { StateContext } from './stateContext';
 
-import { useState, useEffect, useCallback, useReducer } from 'react';
+import { useEffect, useCallback, useContext } from 'react';
 
 function App() {
-  const [todoState, dispatch] = useReducer(todosReducer, initialTodosState);
-
-  const [sortField, setSortField] = useState('createdTime');
-  const [sortDirection, setSortDirection] = useState('desc');
-  const [queryString, setQueryString] = useState('');
+  const { todoState, dispatch, todoActions } = useContext(StateContext);
 
   const encodeUrl = useCallback(() => {
     let searchQuery = '';
-    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-    if (queryString) {
-      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    let sortQuery = `sort[0][field]=${todoState.sortField}&sort[0][direction]=${todoState.sortDirection}`;
+
+    if (todoState.queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${todoState.queryString}",+title)`;
     }
     return encodeURI(
       `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}${searchQuery}`
     );
-  }, [sortField, sortDirection, queryString]);
+  }, [todoState.sortField, todoState.sortDirection, todoState.queryString]);
 
   const API = {
     url: encodeUrl(),
@@ -65,7 +58,7 @@ function App() {
     };
 
     fetchTodos();
-  }, [sortField, sortDirection, queryString]);
+  }, [todoState.sortField, todoState.sortDirection, todoState.queryString]);
 
   const addTodo = async (newTodo) => {
     const payload = {
@@ -194,14 +187,7 @@ function App() {
 
       <hr />
 
-      <TodoViewForm
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        sortField={sortField}
-        setSortField={setSortField}
-        queryString={queryString}
-        setQueryString={setQueryString}
-      />
+      <TodoViewForm />
 
       {todoState.errorMessage !== '' && (
         <div className={styles.error}>

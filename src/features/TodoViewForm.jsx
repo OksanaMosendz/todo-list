@@ -1,44 +1,41 @@
 import styled from 'styled-components';
 import TextInputWithLabel from '../shared/TextInputWithLabel';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { StateContext } from '../stateContext';
 
 const StyledViewForm = styled.form`
   display: flex;
-  width:100%;
+  width: 100%;
   align-items: center;
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
-div{ display:flex;
-flex:1;}
+  div {
+    display: flex;
+    flex: 1;
+  }
 `;
-
-
 
 const StyledSortingOptions = styled.div`
   display: flex;
-  width:100%;
-  justify-content:space-evenly;
+  width: 100%;
+  justify-content: space-evenly;
 `;
 
+function TodoViewForm() {
+  const { todoState, dispatch, todoActions } = useContext(StateContext);
 
-function TodoViewForm({
-  sortDirection,
-  setSortDirection,
-  sortField,
-  setSortField,
-  queryString,
-  setQueryString,
-}) {
-  const [localQueryString, setLocalQueryString] = useState(queryString);
+  const [localQueryString, setLocalQueryString] = useState(
+    todoState.queryString
+  );
 
   useEffect(() => {
     const debounce = setTimeout(() => {
-      setQueryString(localQueryString);
+      dispatch({ type: todoActions.setQueryString, string: localQueryString });
     }, 500);
 
     return () => clearTimeout(debounce);
-  }, [localQueryString, setQueryString]);
+  }, [localQueryString, todoState.queryString]);
 
   return (
     <StyledViewForm onSubmit={(e) => e.preventDefault()}>
@@ -61,8 +58,8 @@ function TodoViewForm({
         <label htmlFor="sort-by">Sort by</label>
         <select
           id="sort-by"
-          value={sortField}
-          onChange={(e) => setSortField(e.target.value)}
+          value={todoState.sortField}
+          onChange={(e) => dispatch({ type: todoActions.setSortField, e })}
         >
           <option value="title">Title</option>
           <option value="createdTime">Time added</option>
@@ -71,8 +68,8 @@ function TodoViewForm({
         <label htmlFor="direction">Direction</label>
         <select
           id="direction"
-          value={sortDirection}
-          onChange={(e) => setSortDirection(e.target.value)}
+          value={todoState.sortDirection}
+          onChange={(e) => dispatch({ type: todoActions.setSortDirection, e })}
         >
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
