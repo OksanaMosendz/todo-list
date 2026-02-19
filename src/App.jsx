@@ -3,27 +3,24 @@ import styles from './App.module.css';
 import TodoList from './features/TodoList/TodoList';
 import TodoForm from './TodoForm';
 import TodoViewForm from './features/TodoViewForm';
-import { useState, useEffect, useCallback } from 'react';
+import { StateContext } from './stateContext';
+
+import { useEffect, useCallback, useContext } from 'react';
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [sortField, setSortField] = useState('createdTime');
-  const [sortDirection, setSortDirection] = useState('desc');
-  const [queryString, setQueryString] = useState('');
+  const { todoState, dispatch, todoActions } = useContext(StateContext);
 
   const encodeUrl = useCallback(() => {
     let searchQuery = '';
-    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-    if (queryString) {
-      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    let sortQuery = `sort[0][field]=${todoState.sortField}&sort[0][direction]=${todoState.sortDirection}`;
+
+    if (todoState.queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${todoState.queryString}",+title)`;
     }
     return encodeURI(
       `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}?${sortQuery}${searchQuery}`
     );
-  }, [sortField, sortDirection, queryString]);
+  }, [todoState.sortField, todoState.sortDirection, todoState.queryString]);
 
   const API = {
     url: encodeUrl(),
@@ -32,8 +29,8 @@ function App() {
 
   useEffect(() => {
     const fetchTodos = async () => {
-      setIsLoading(true);
-      setErrorMessage('');
+      dispatch({ type: todoActions.fetchTodos });
+      dispatch({ type: todoActions.clearError });
 
       const options = {
         method: 'GET',
@@ -50,30 +47,18 @@ function App() {
         if (!response.ok) {
           throw new Error(data.error.message);
         }
-        const records = data.records;
+        const records = await data.records;
 
-        const fetchedTodos = records.map((record) => {
-          const todo = {
-            title: record.fields.title,
-            id: record.id,
-            isCompleted: record.fields.isCompleted,
-          };
-
-          if (!todo.isCompleted) {
-            todo.isCompleted = false;
-          }
-          return todo;
-        });
-        setTodoList([...fetchedTodos]);
+        dispatch({ type: todoActions.loadTodos, records });
       } catch (error) {
-        setErrorMessage(error.message);
+        dispatch({ type: todoActions.setError, error });
       } finally {
-        setIsLoading(false);
+        dispatch({ type: todoActions.endRequest });
       }
     };
 
     fetchTodos();
-  }, [sortField, sortDirection, queryString]);
+  }, [todoState.sortField, todoState.sortDirection, todoState.queryString]);
 
   const addTodo = async (newTodo) => {
     const payload = {
@@ -97,39 +82,27 @@ function App() {
     };
 
     try {
-      setIsSaving(true);
+      dispatch({ type: todoActions.startRequest });
       const response = await fetch(API.url, options);
       const data = await response.json();
+      const records = await data.records;
 
-      const records = data.records;
       if (!response.ok) {
         throw new Error(records.error.message);
       }
-      const savedTodo = {
-        title: records[0].fields.title,
-        id: records[0].id,
-        isCompleted: records[0].fields.isCompleted,
-      };
-
-      if (!records[0].fields.isCompleted) {
-        savedTodo.isCompleted = false;
-      }
-
-      setTodoList([...todoList, savedTodo]);
+      dispatch({ type: todoActions.addTodo, records });
     } catch (error) {
-      setErrorMessage(error.message);
+      dispatch({ type: todoActions.setError, error });
     }
-    setIsSaving(false);
+    dispatch({ type: todoActions.endRequest });
   };
 
   const changeTodo = async (editedTodo) => {
-    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
-
-    setTodoList((prevTodoList) =>
-      prevTodoList.map((todo) =>
-        todo.id === editedTodo.id ? editedTodo : todo
-      )
+    const originalTodo = todoState.todoList.find(
+      (todo) => todo.id === editedTodo.id
     );
+
+    dispatch({ type: todoActions.changeTodo, editedTodo });
 
     const payload = {
       records: [
@@ -160,17 +133,9 @@ function App() {
         throw new Error(data.error.message);
       }
     } catch (error) {
-      console.log(error);
-      setErrorMessage(`${error.message}. Reverting todo...`);
-
-      const revertedTodos = todoList.map((todo) => {
-        if (originalTodo.id === todo.id) {
-          return originalTodo;
-        } else return todo;
-      });
-      setTodoList([...revertedTodos]);
+      dispatch({ type: todoActions.revertTodos, originalTodo });
     } finally {
-      setIsSaving(false);
+      dispatch({ type: todoActions.endRequest });
     }
   };
 
@@ -211,27 +176,20 @@ function App() {
         </svg>
         <h1>Todo List</h1>
       </div>
-      <TodoForm onAddTodo={addTodo} isSaving={isSaving}></TodoForm>
+      <TodoForm onAddTodo={addTodo} isSaving={todoState.isSaving}></TodoForm>
 
       <TodoList
         onCompleteTodo={changeTodo}
         onUpdateTodo={changeTodo}
-        todoList={todoList}
-        isLoading={isLoading}
+        todoList={todoState.todoList}
+        isLoading={todoState.isLoading}
       ></TodoList>
 
       <hr />
 
-      <TodoViewForm
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        sortField={sortField}
-        setSortField={setSortField}
-        queryString={queryString}
-        setQueryString={setQueryString}
-      />
+      <TodoViewForm />
 
-      {errorMessage !== '' && (
+      {todoState.errorMessage !== '' && (
         <div className={styles.error}>
           <svg
             viewBox="-2.4 -2.4 28.80 28.80"
@@ -253,8 +211,11 @@ function App() {
               </g>{' '}
             </g>
           </svg>
-          <p>{errorMessage}</p>{' '}
-          <button type="button" onClick={() => setErrorMessage('')}>
+          <p>{todoState.errorMessage}</p>{' '}
+          <button
+            type="button"
+            onClick={() => dispatch({ type: todoActions.clearError })}
+          >
             Dismiss
           </button>
         </div>
