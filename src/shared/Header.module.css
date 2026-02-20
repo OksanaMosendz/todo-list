@@ -1,0 +1,28 @@
+.active{
+   color: greyish;
+}
+
+.inactive{
+    color: rgb(41, 36, 36);
+}
+
+h1{
+flex-grow: 1;
+text-align: center;
+}
+
+div{
+display:flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+}
+
+nav{
+   display: flex;
+   gap: 1rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+
