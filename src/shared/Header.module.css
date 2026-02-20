@@ -11,12 +11,6 @@ flex-grow: 1;
 text-align: center;
 }
 
-div{
-display:flex;
-align-items: center;
-justify-content: center;
-width: 100%;
-}
 
 nav{
    display: flex;
@@ -25,4 +19,15 @@ nav{
   margin-left: auto;
 }
 
+
+.title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  svg{
+    width:2.5rem;
+    
+  }
+}
 

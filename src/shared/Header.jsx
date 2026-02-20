@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import styles from './Header.module.css';
 function Header({ title }) {
   return (
-    <div>
+      <div className={styles.title}>
       <svg
         fill="#000000"
         version="1.1"

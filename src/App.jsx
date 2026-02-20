@@ -3,7 +3,7 @@ import styles from './App.module.css';
 import TodosPage from './pages/TodosPage';
 import { StateContext } from './stateContext';
 import Header from './shared/Header';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Route, Routes } from 'react-router-dom';
 import { useEffect, useCallback, useContext, useState } from 'react';
 
 function App() {
@@ -151,16 +151,21 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <div className={styles.title}>
-        <Header title={title} />
-      </div>
-
-      <TodosPage
-        onAddTodo={addTodo}
-        onCompleteTodo={changeTodo}
-        onUpdateTodo={changeTodo}
-      />
-
+      <Header title={title} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <TodosPage
+              onAddTodo={addTodo}
+              onCompleteTodo={changeTodo}
+              onUpdateTodo={changeTodo}
+            />
+          }
+        />
+        <Route path="/about" element={<h1>About</h1>} />
+        <Route path="/\*" element={<h1>Not found</h1>} />
+      </Routes>
       {todoState.errorMessage !== '' && (
         <div className={styles.error}>
           <svg
