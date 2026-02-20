@@ -1,8 +1,6 @@
 import './App.css';
 import styles from './App.module.css';
-import TodoList from './features/TodoList/TodoList';
-import TodoForm from './TodoForm';
-import TodoViewForm from './features/TodoViewForm';
+import TodosPage from './pages/TodosPage';
 import { StateContext } from './stateContext';
 
 import { useEffect, useCallback, useContext } from 'react';
@@ -176,18 +174,9 @@ function App() {
         </svg>
         <h1>Todo List</h1>
       </div>
-      <TodoForm onAddTodo={addTodo} isSaving={todoState.isSaving}></TodoForm>
-
-      <TodoList
-        onCompleteTodo={changeTodo}
-        onUpdateTodo={changeTodo}
-        todoList={todoState.todoList}
-        isLoading={todoState.isLoading}
-      ></TodoList>
-
-      <hr />
-
-      <TodoViewForm />
+  
+      <TodosPage  onAddTodo={addTodo} onCompleteTodo={changeTodo}
+        onUpdateTodo={changeTodo}/>
 
       {todoState.errorMessage !== '' && (
         <div className={styles.error}>
