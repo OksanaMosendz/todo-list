@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import styles from './TodoList.module.css';
 import TodoListItem from './TodoListItem';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 function TodoList({ todoList, onUpdateTodo, isLoading }) {
   const filtredTodoList = todoList.filter((todo) => !todo.isCompleted);
@@ -16,6 +17,17 @@ function TodoList({ todoList, onUpdateTodo, isLoading }) {
     indexOfFirstTodo,
     indexOfLastTodo
   );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      !Number.isFinite(currentPage) ||
+      currentPage < 1 ||
+      currentPage > totalPages
+    ) {
+      navigate('/');
+    }
+  }, [currentPage, totalPages, navigate]);
 
   function handlePreviousPage() {
     if (currentPage > 1) {
@@ -49,11 +61,15 @@ function TodoList({ todoList, onUpdateTodo, isLoading }) {
       </ul>
 
       <div className={styles.paginationControls}>
-        <button onClick={handlePreviousPage}>Previous</button>
+        <button disabled={currentPage === 1} onClick={handlePreviousPage}>
+          Previous
+        </button>
         <span>
           Page {currentPage} of {totalPages}
         </span>
-        <button onClick={handleNextPage}>Next</button>
+        <button disabled={currentPage === totalPages} onClick={handleNextPage}>
+          Next
+        </button>
       </div>
     </>
   );
