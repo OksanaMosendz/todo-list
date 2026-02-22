@@ -20,13 +20,15 @@ function TodoList({ todoList, onUpdateTodo, isLoading }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(totalPages>0){
+    console.log(" useEffect")
     if (
       !Number.isFinite(currentPage) ||
       currentPage < 1 ||
       currentPage > totalPages
     ) {
       navigate('/');
-    }
+    }}
   }, [currentPage, totalPages, navigate]);
 
   function handlePreviousPage() {
