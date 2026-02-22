@@ -5,10 +5,8 @@ import TextInputWithLabel from './shared/TextInputWithLabel';
 
 const StyledTodoForm = styled.form`
   display: flex;
-  width:100%;
+  width: 100%;
   align-items: center;
-  margin: 1rem 0 1rem 0;
-
 `;
 
 const StyledButton = styled.button`

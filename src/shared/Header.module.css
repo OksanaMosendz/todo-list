@@ -1,33 +1,38 @@
-.active{
-   color: greyish;
+.active {
+  color: brown;
 }
 
-.inactive{
-    color: rgb(41, 36, 36);
+.inactive {
+  color: rgb(41, 36, 36);
 }
 
-h1{
-flex-grow: 1;
-text-align: center;
-}
-
-
-nav{
-   display: flex;
-   gap: 1rem;
-  align-items: center;
-  margin-left: auto;
+.headerwrap {
+  display: flex;
+  width: 100%;
 }
 
 
-.title{
+.title {
   display: flex;
   align-items: center;
+  flex-grow: 3;
   justify-content: center;
   width: 100%;
-  svg{
-    width:2.5rem;
-    
+
+  svg {
+    width: 2.5rem;
+    display: inline-block;
   }
 }
 
+nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto;
+  flex-grow: 1;
+
+  a {
+    text-decoration: none;
+  }
+}

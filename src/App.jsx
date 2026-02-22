@@ -3,6 +3,8 @@ import styles from './App.module.css';
 import TodosPage from './pages/TodosPage';
 import { StateContext } from './stateContext';
 import Header from './shared/Header';
+import About from './pages/About';
+import NotFound from './pages/NotFound';
 import { useLocation, Route, Routes } from 'react-router-dom';
 import { useEffect, useCallback, useContext, useState } from 'react';
 
@@ -163,8 +165,8 @@ function App() {
             />
           }
         />
-        <Route path="/about" element={<h1>About</h1>} />
-        <Route path="/\*" element={<h1>Not found</h1>} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {todoState.errorMessage !== '' && (
         <div className={styles.error}>

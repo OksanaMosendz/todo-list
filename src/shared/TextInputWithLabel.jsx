@@ -2,12 +2,13 @@ import styled from 'styled-components';
 
 const StyledInputWithLabel = styled.div`
   display: inline-flex;
-  flex:1;
+  flex: 1;
   gap: 0.5rem;
   align-items: center;
   margin-right: 0.5rem;
-  input{flex:1;}
-
+  input {
+    flex: 1;
+  }
 `;
 
 function TextInputWithLabel({ elementId, label, onChange, ref, value, type }) {
